@@ -23,9 +23,13 @@ glance = Client('2',
                 token=token)
 
 for image in glance.images.list():
+    # Snapshots are in raw format. Use this way to remove snapshots from backup
+    # Needs a elegant way to do that
     if image.disk_format == "raw":
         pass
     else:
+        # Remove "(" and ")" from filename
+        # TODO: add all not allowed characters
         name = re.sub('[/(/)]','_',image.name)
         filename = name + "." + image.disk_format
         image_file = open(filename, 'w+')
