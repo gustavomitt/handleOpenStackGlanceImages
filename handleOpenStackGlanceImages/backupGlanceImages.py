@@ -21,4 +21,15 @@ glance = Client('2',
                 token=token)
 
 for image in glance.images.list():
-   print image
+    print image
+   
+cirros = glance.images.get("fd2c1699-fe0b-4c8d-8a4b-065831fe6360")
+
+d = glance.images.data(cirros.id)
+
+filename = cirros.name + "." + cirros.disk_format
+
+image_file = open(filename, 'w+')
+
+for chunk in glance.images.data(cirros.id):
+    image_file.write(chunk)
