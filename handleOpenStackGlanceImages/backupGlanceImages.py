@@ -8,6 +8,7 @@ from keystoneclient.auth.identity import v2 as identity
 from keystoneclient import session
 from glanceclient import Client
 import os
+import re
 
 auth = identity.Password(auth_url=os.environ['OS_AUTH_URL'],
                          username=os.environ['OS_USERNAME'],
@@ -22,11 +23,15 @@ glance = Client('2',
                 token=token)
 
 for image in glance.images.list():
-    filename = image.name + "." + image.disk_format
-    image_file = open(filename, 'w+')
-    for chunk in glance.images.data(image.id):
-        image_file.write(chunk)
-    print "Image wrote: " + filename
+    if image.disk_format == "raw":
+        pass
+    else:
+        name = re.sub('[/(/)]','_',image.name)
+        filename = name + "." + image.disk_format
+        image_file = open(filename, 'w+')
+        for chunk in glance.images.data(image.id):
+            image_file.write(chunk)
+        print "Image wrote: " + filename
     
     
    
