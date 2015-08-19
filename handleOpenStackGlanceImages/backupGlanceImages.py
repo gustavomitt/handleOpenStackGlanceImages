@@ -9,6 +9,7 @@ from keystoneclient import session
 from glanceclient import Client
 import os
 import re
+import os.path
 
 auth = identity.Password(auth_url=os.environ['OS_AUTH_URL'],
                          username=os.environ['OS_USERNAME'],
@@ -32,10 +33,13 @@ for image in glance.images.list():
         # TODO: add all not allowed characters
         name = re.sub('[/(/)]','_',image.name)
         filename = name + "." + image.disk_format
-        image_file = open(filename, 'w+')
-        for chunk in glance.images.data(image.id):
-            image_file.write(chunk)
-        print "Image wrote: " + filename
+        if os.path.isfile(filename):
+            pass
+        else:
+            image_file = open(filename, 'w+')
+            for chunk in glance.images.data(image.id):
+                image_file.write(chunk)
+            print "Image wrote: " + filename
     
     
    
